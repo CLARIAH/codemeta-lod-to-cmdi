@@ -4,10 +4,8 @@ from datetime import datetime
 import json
 import locale
 locale.setlocale(locale.LC_ALL, 'nl_NL') 
-import os
-import pprint as pp
-import re
 import sys
+
 
 def getHeader():
     return '''<?xml version="1.0" encoding="UTF-8"?>
@@ -16,6 +14,7 @@ def getHeader():
         <cmd:MdProfile>PROF</cmd:MdProfile>
     </cmd:Header>
 '''
+
 
 def getResources():
     resources = '''    <cmd:Resources>
@@ -31,30 +30,52 @@ def getResources():
 '''
     return resources
 
-def getComponents(data):
-    components = f'''    <cmd:Components>
-'''
 
-    components += '''    </cmd:Components>
-'''
-    return components
+def getComponents(tag,data,indent=2):
+    indent_str = '    ' * indent
+    if tag=='@context':
+        return '',''
+    result = ''
+    attrs = ''
+    if isinstance(data,list):
+        for v in data:
+            res,att = getComponents(f'{tag}',v,indent)
+            result += f'{res}'
+    elif isinstance(data,dict):
+        indent += 1
+        for k,v in data.items():
+            res,att = getComponents(f'{k}',v,indent)
+            result += res
+            if att!='':
+                attrs += f' {att}'
+        result = f'{indent_str}<cmdp:{tag}{attrs}>\n{result}{indent_str}</cmdp:{tag}>\n'
+        attrs = ''
+    elif isinstance(data,str):
+        if tag[0]=='@':
+            attrs = f'{tag[1:]}="{data}"'
+        else:
+            result += f'{indent_str}<cmdp:{tag}>{data}</cmdp:{tag}>\n'
+    else:
+        stderr(f'{data} is type: {type(data)}')
+    return result,attrs
+
 
 def getFooter():
     return '</cmd:CMD>'
 
-def makeItem(key,value):
-    return f'<{key}></{key}>'
 
-def makeCmdi(data):
+def makeCmdi(tag,data):
     result = getHeader()
     result += getResources()
-    result += getComponents(data)
+    res,att = getComponents(tag,data)
+    result += f'    <cmd:Components>\n{res}    </cmd:Components>\n'
     result += getFooter()
     return result
 
 
 def stderr(text,nl='\n'):
     sys.stderr.write(f"{text}{nl}")
+
 
 def arguments():
     ap = argparse.ArgumentParser(description='Convert multi page tif files into single page jpeg files"')
@@ -67,6 +88,7 @@ def arguments():
     args = vars(ap.parse_args())
     return args
 
+
 if __name__ == "__main__":
     stderr(datetime.today().strftime("start: %H:%M:%S"))
     args = arguments()
@@ -76,14 +98,7 @@ if __name__ == "__main__":
     output = open(outputfile,'w',encoding='UTF8')
 
     data = json.load(open(inputfile))
-    pp.pprint(data,indent=4)
-    stderr(data.keys())
-#    for key,value in data.items():
-#        if key=='@context':
-#            continue
-#        stderr(f'{key} - {value}')
-#        output.write(f'{makeItem(key,value)}\n')
     
-    output.write(f'{makeCmdi(data)}\n')
+    output.write(f"{makeCmdi('Codemeta',data)}\n")
 
     stderr(datetime.today().strftime("end:   %H:%M:%S"))
