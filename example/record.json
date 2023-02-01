@@ -1,0 +1,86 @@
+{
+    "@context": [
+        "https://doi.org/10.5063/schema/codemeta-2.0",
+        "http://schema.org",
+        "https://w3id.org/software-types",
+        "https://w3id.org/software-iodata",
+        "https://w3id.org/research-technology-readiness-levels"
+    ],
+    "@id": "https://example.org/mysoftware",
+    "@type": "SoftwareSourceCode",
+    "identifier": "mysoftware",
+    "name": "My Software",
+    "description": "My software does nice stuff",
+    "codeRepository": "https://github.com/someuser/mysoftware",
+    "url": "https://example.org/my-software-website",
+    "issueTracker": "https://github.com/someuser/mysoftware/issues",
+    "license": "https://spdx.org/licenses/GPL-3.0-only",
+    "developmentStatus": "https://www.repostatus.org/#active",
+    "author": {
+        "@type": "Person",
+        "givenName": "John",
+        "familyName": "Doe"
+    },
+    "producer": {
+        "@type": "Organization",
+        "name": "My Organization",
+        "url": "https://example.org"
+    },
+    "maintainer": {
+        "@type": "Person",
+        "givenName": "John",
+        "familyName": "Doe"
+    },
+    "operatingSystem": [ "Linux", "Windows", "macOS", "BSD" ],
+    "processorRequirements": [ "x84_64", "aarch64" ] ,
+    "memoryRequirements": "2GB",
+    "runtimePlatform": "Python >= 3.6",
+    "programmingLanguage": "Python",
+    "softwareRequirements": [
+        {
+            "@type": "SoftwareLibrary",
+            "name": "Some required library",
+            "version": ">= 2.3"
+        }
+    ],
+    "softwareHelp": [
+        {
+            "@id": "https://example.readthedocs.io",
+            "@type": "WebSite",
+            "name": "My example documentation",
+            "url": "https://example.readthedocs.io"
+        }
+    ],
+    "targetProduct": [
+        {
+            "@type": "CommandLineApplication",
+            "name": "My software",
+            "executableName": "mysoftware"
+        },
+        {
+            "@type": "SoftwareLibrary",
+            "name": "My software"
+        },
+        {
+            "@type": "WebApplication",
+            "name": "My software",
+            "url": "https://example.org/mysoftware",
+            "provider": {
+                "@type": "Organization",
+                "name": "My Organization",
+                "url": "https://example.org"
+            }
+        }
+    ],
+    "funding": {
+        "@type": "Grant",
+        "name": "CLARIAH-PLUS (NWO grant 184.034.023)",
+        "funder": {
+            "@type": "Organization",
+            "name": "NWO", 
+            "url": "https://www.nwo.nl"
+        }
+    },
+    "dateCreated": "2022-04-29T14:57:10Z+0200",
+    "dateModified": "2022-04-29T14:57:10Z+0200"
+}
