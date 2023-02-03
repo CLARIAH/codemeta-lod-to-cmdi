@@ -50,7 +50,7 @@ def getComponents(tag,data,indent=2):
                 attrs += f' {att}'
         result = f'{indent_str}<cmdp:{tag}{attrs}>\n{result}{indent_str}</cmdp:{tag}>\n'
         attrs = ''
-    elif isinstance(data,str):
+    elif isinstance(data,str) or isinstance(data,int):
         if tag[0]=='@':
             attrs = f'{tag[1:]}="{data}"'
         else:
