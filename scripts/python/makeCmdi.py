@@ -4,8 +4,18 @@ from datetime import datetime
 import json
 import locale
 locale.setlocale(locale.LC_ALL, 'nl_NL') 
+import re
 import sys
+#from urllib.parse import urlparse
 
+
+url_regexp = re.compile(
+    r"(\w+://)?"                # protocol                      (optional)
+    r"(\w+\.)?"                 # host                          (optional)
+    r"((\w+)\.(\w+))"           # domain
+    r"(\.\w+)*"                 # top-level domain              (optional, can have > 1)
+    r"([\w\-\._\~/]*)*(?<!\.)"  # path, params, anchors, etc.   (optional)
+)
 
 def getHeader():
     return '''<?xml version="1.0" encoding="UTF-8"?>
@@ -35,8 +45,13 @@ def getComponents(tag,data,indent=2):
     indent_str = '    ' * indent
     if tag=='@context':
         return '',''
+    new_tag = tag
     result = ''
     attrs = ''
+    md = url_regexp.search(tag)
+    if md!=None:
+        attrs = f' org="{tag}"'
+        new_tag = tag.split('/')[-1]
     if isinstance(data,list):
         for v in data:
             res,att = getComponents(f'{tag}',v,indent)
@@ -48,13 +63,13 @@ def getComponents(tag,data,indent=2):
             result += res
             if att!='':
                 attrs += f' {att}'
-        result = f'{indent_str}<cmdp:{tag}{attrs}>\n{result}{indent_str}</cmdp:{tag}>\n'
+        result = f'{indent_str}<cmdp:{new_tag}{attrs}>\n{result}{indent_str}</cmdp:{new_tag}>\n'
         attrs = ''
     elif isinstance(data,str) or isinstance(data,int):
         if tag[0]=='@':
             attrs = f'{tag[1:]}="{data}"'
         else:
-            result += f'{indent_str}<cmdp:{tag}>{data}</cmdp:{tag}>\n'
+            result += f'{indent_str}<cmdp:{new_tag}{attrs}>{data}</cmdp:{new_tag}>\n'
     else:
         stderr(f'{data} is type: {type(data)}')
     return result,attrs
@@ -101,4 +116,38 @@ if __name__ == "__main__":
     
     output.write(f"{makeCmdi('Codemeta',data)}\n")
 
+    try:
+        result = urlparse('https://www.blabla.com')
+        stderr([result.scheme, result.netloc])
+    except:
+        stderr(False)
+
     stderr(datetime.today().strftime("end:   %H:%M:%S"))
+
+
+
+    '''
+    tag met :
+    plaats in org=""
+    gebruik alleen laatste stuk
+    vb:
+    <cmdp:dct:creator>
+    wordt <cmdp:creator org="dct:creator">
+    
+    met https://etc
+    plaats ook in https=""
+    gebruik alleen laatste stuk
+    <cmdp:https://github.com/proycon/codemetapy/errors>
+    wordt
+    <cmdp:errors org="https://github.com/proycon/codemetapy">
+
+    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+    url = re.findall(regex, string)
+
+    try:
+        result = urlparse(x)
+        return all([result.scheme, result.netloc])
+    except:
+        return False
+
+'''
