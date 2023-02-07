@@ -41,13 +41,18 @@ def getResources():
     return resources
 
 
-def getComponents(tag,data,indent=2):
+def getComponents(tag,data,indent=2,debug=False):
+    if debug:
+        stderr(f'tag: {tag}')
+        stderr(f'data: {data}')
+        stderr(f'instance: {type(data)}')
     indent_str = '    ' * indent
     if tag=='@context':
         return '',''
     new_tag = tag
     result = ''
     attrs = ''
+    new_attrs = ''
     md = url_regexp.search(tag)
     if md!=None:
         attrs = f' org="{tag}"'
@@ -55,12 +60,20 @@ def getComponents(tag,data,indent=2):
     else:
         parts = tag.split(':')
         if len(parts)>1:
-            attrs = f' org="{tag}"'
+            new_attrs = f' org="{tag}"'
             new_tag = parts[-1]
+    if debug:
+        stderr(f'new_tag: {new_tag}')
+        stderr(f'new_attrs: {new_attrs}')
+
     if isinstance(data,list):
         for v in data:
             res,att = getComponents(f'{tag}',v,indent)
             result += f'{res}'
+            if debug:
+                stderr(f'tag in list: {tag}')
+                stderr(f'res in list: {result}')
+                stderr(f'att in list: {att}')
     elif isinstance(data,dict):
         indent += 1
         for k,v in data.items():
@@ -68,15 +81,19 @@ def getComponents(tag,data,indent=2):
             result += res
             if att!='':
                 attrs += f' {att}'
-        result = f'{indent_str}<cmdp:{new_tag}{attrs}>\n{result}{indent_str}</cmdp:{new_tag}>\n'
+        result = f'{indent_str}<cmdp:{new_tag}{new_attrs}>\n{result}{indent_str}</cmdp:{new_tag}>\n'
         attrs = ''
     elif isinstance(data,str) or isinstance(data,int):
         if tag[0]=='@':
             attrs = f'{tag[1:]}="{data}"'
         else:
-            result += f'{indent_str}<cmdp:{new_tag}{attrs}>{escape_chars(data)}</cmdp:{new_tag}>\n'
+            result += f'{indent_str}<cmdp:{new_tag}{attrs}{new_attrs}>{escape_chars(data)}</cmdp:{new_tag}>\n'
+            attrs = ''
     else:
         stderr(f'{data} is type: {type(data)}')
+    if debug:
+        stderr(f'result: {result}')
+        stderr(f'attrs: {attrs}')
     return result,attrs
 
 def escape_chars(text):
