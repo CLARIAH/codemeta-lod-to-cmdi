@@ -57,6 +57,7 @@ def getComponents(tag,data,indent=2,debug=False):
     if md!=None:
         attrs = f' org="{tag}"'
         new_tag = tag.split('/')[-1]
+        new_tag = new_tag.split('#')[-1]
     else:
         parts = tag.split(':')
         if len(parts)>1:
