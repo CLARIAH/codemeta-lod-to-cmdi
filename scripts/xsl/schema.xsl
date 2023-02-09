@@ -5,7 +5,7 @@
     exclude-result-prefixes="xs" version="3.0">
 
     <xsl:param name="schema"
-        select="document('file:/Users/menzowi/Documents/Projects/CLARIAH/Datasets/codemeta-lod-to-cmdi/scripts/xsl/schema-template.xml')"/>
+        select="document('schema-template.xml')"/>
     
     <xsl:param name="recs" select="0"/>
     <xsl:param name="SKIP" select="()"/>
