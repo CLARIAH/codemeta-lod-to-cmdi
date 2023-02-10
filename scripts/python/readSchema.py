@@ -13,7 +13,7 @@ def make_ns_attr(attr):
     ns_attr = '{' + f'{ns["s"]}' + '}' + attr
     return ns_attr
 
-def traverse(element,indent=1):
+def traverse(element,uitvoer,indent=1):
     indent_str = '    ' * indent
     for child in element:
         attrs = ''
@@ -32,11 +32,13 @@ def traverse(element,indent=1):
         except:
             pass
         if child:
-            stderr(f'{indent_str}Component name="{child.tag}"{attrs}')
-            traverse(child,indent=indent+1)
+            uitvoer.write(f'{indent_str}<Component name="{child.tag}"{attrs}>\n')
+            traverse(child,uitvoer,indent=indent+1)
+            uitvoer.write(f'{indent_str}</Component>\n')
         else:
-            if child.tag!=make_ns_attr('instance'):
-                stderr(f'{indent_str}Element name="{child.tag}"{attrs}')
+#            if child.tag!=make_ns_attr('instance'):
+                tag = child.tag.replace(ns['s'],'s').replace("{s}","s:")
+                uitvoer.write(f'{indent_str}<Element name="{tag}"{attrs}/>\n')
 
 
 
@@ -62,6 +64,16 @@ if __name__ == "__main__":
     inputfile = args['input']
     outputfile = args['output']
     stderr(f'convert schema.xml to {outputfile}')
+    uitvoer = open(outputfile,'w')
+    uitvoer.write('''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ComponentSpec isProfile="true" CMDVersion="1.2" CMDOriginalVersion="1.2" xsi:noNamespaceSchemaLocation="https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Header>
+        <ID>clarin.eu:cr1:p_1653377925727</ID>
+        <Name>Vragenlijst</Name>
+        <Description>Voor de curatie van de vragenlijsten</Description>
+        <Status>development</Status>
+    </Header>
+''')
 
 
     tree = ET.parse(inputfile)
@@ -69,9 +81,10 @@ if __name__ == "__main__":
 #    stderr(f'root: {root.tag}')
 #    stderr(f'attrib: {root.attrib}')
 #    stderr(f'children: {root.children}')
-    stderr(f'Component name="Codemeta" CardinalityMin="1" CardinalityMax="1"')
+    uitvoer.write(f'<Component name="Codemeta" CardinalityMin="1" CardinalityMax="1">\n')
     codemeta = root.find('Codemeta')
-    traverse(codemeta)
+    traverse(codemeta,uitvoer)
+    uitvoer.write(f'</Component>\n')
 
     stderr(datetime.today().strftime("end:   %H:%M:%S"))
 
