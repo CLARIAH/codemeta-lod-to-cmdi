@@ -17,13 +17,17 @@ def traverse(element,indent=1):
     indent_str = '    ' * indent
     for child in element:
         attrs = ''
+        minimum = 0
         try:
-            minimum = child.attrib[make_ns_attr('min')]
+            minimum = int(child.attrib[make_ns_attr('min')])
             attrs += f' CardinalityMin="{minimum}"'
         except:
             pass
         try:
-            maximum = child.attrib[make_ns_attr('max')]
+            if minimum>1:
+                maximum = 'unbounded'
+            else:
+                maximum = child.attrib[make_ns_attr('max')]
             attrs += f' CardinalityMax="{maximum}"'
         except:
             pass
