@@ -114,14 +114,22 @@
                    </xsl:choose>
                </xsl:when>
                 <xsl:when test="empty(s:instance[not(matches(normalize-space(.),'^https?://.+$'))])">
-                <!-- uri http(s) -->
+                    <!-- uri http(s) -->
                     <xsl:attribute name="s:datatype" select="'uri'"/>
                  </xsl:when>
-                <!--
-                    dateTime
-                -->
                 <xsl:when test="empty(s:instance[not(matches(normalize-space(.),'^[0-9]+\.[0-9]+$'))])">
                     <xsl:attribute name="s:datatype" select="'float'"/>
+                </xsl:when>
+                <xsl:when test="empty(s:instance[not(matches(normalize-space(.),'^[0-9]+-[0-9]+-[0-9]+.*$'))])">
+                    <!-- date or dateTime -->
+                    <xsl:choose>
+                        <xsl:when  test="empty(s:instance[not(matches(normalize-space(.),'^[0-9]+-[0-9]+-[0-9][ T][0-9]+:[0-9]+:[0-9]+.*$'))])">
+                            <xsl:attribute name="s:datatype" select="'datetime'"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            </xs<xsl:attribute name="s:datatype" select="'date'"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:attribute name="s:datatype" select="'text'"/>
