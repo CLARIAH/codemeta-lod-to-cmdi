@@ -31,6 +31,11 @@ def traverse(element,uitvoer,indent=1):
             attrs += f' CardinalityMax="{maximum}"'
         except:
             pass
+        try:
+            datatype = child.attrib[make_ns_attr('datatype')]
+            attrs += f' DataType="{datatype}"'
+        except:
+            pass
         if child:
             uitvoer.write(f'{indent_str}<Component name="{child.tag}"{attrs}>\n')
             traverse(child,uitvoer,indent=indent+1)
