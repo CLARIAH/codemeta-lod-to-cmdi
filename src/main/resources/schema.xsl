@@ -21,9 +21,10 @@
             <xsl:attribute name="s:min"
                 select="min((count($nodes[exists(text()[normalize-space(.) != '']) or exists(node())]), $snode/@s:min))"/>
             <xsl:attribute name="s:max" select="
-                    max((for $p in $nodes/..
-                    return
-                        count($p/*[local-name() = $name]), $snode/@s:max))"/>
+                max((for $p in $nodes/..
+                return
+                count($p/*[local-name() = $name]), $snode/@s:max))"/>
+            <xsl:attribute name="s:uri" select="@org"/>
             <xsl:for-each-group select="$nodes[exists(text()[normalize-space(.) != ''])]"
                 group-by="normalize-space(.)">
                 <s:instance
