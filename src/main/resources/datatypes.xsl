@@ -127,7 +127,7 @@
                             <xsl:attribute name="s:datatype" select="'datetime'"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            </xs<xsl:attribute name="s:datatype" select="'date'"/>
+                            <xsl:attribute name="s:datatype" select="'date'"/>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
