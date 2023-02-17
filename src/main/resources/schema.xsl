@@ -24,7 +24,9 @@
                 max((for $p in $nodes/..
                 return
                 count($p/*[local-name() = $name]), $snode/@s:max))"/>
-            <xsl:attribute name="s:uri" select="@org"/>
+            <xsl:if test="exists(@org)">
+                <xsl:attribute name="s:uri" select="@org"/>
+            </xsl:if>
             <xsl:for-each-group select="$nodes[exists(text()[normalize-space(.) != ''])]"
                 group-by="normalize-space(.)">
                 <s:instance
