@@ -32,8 +32,18 @@ def traverse(element,uitvoer,indent=1):
         except:
             pass
         try:
+            uri = child.attrib[make_ns_attr('uri')]
+            if not uri=='':
+                attrs += f' ConceptLink="{uri}"'
+        except:
+            pass
+        try:
             datatype = child.attrib[make_ns_attr('datatype')]
+            if datatype == 'text':
+                datatype = 'string'
             attrs += f' DataType="{datatype}"'
+            uitvoer.write(f'{indent_str}<Element name="{child.tag}"{attrs}/>\n')
+            continue
         except:
             pass
         if child:
@@ -41,7 +51,7 @@ def traverse(element,uitvoer,indent=1):
             traverse(child,uitvoer,indent=indent+1)
             uitvoer.write(f'{indent_str}</Component>\n')
         else:
-#            if child.tag!=make_ns_attr('instance'):
+            if child.tag!=make_ns_attr('instance'):
                 tag = child.tag.replace(ns['s'],'s').replace("{s}","s:")
                 uitvoer.write(f'{indent_str}<Element name="{tag}"{attrs}/>\n')
 
@@ -89,7 +99,7 @@ if __name__ == "__main__":
     uitvoer.write(f'<Component name="Codemeta" CardinalityMin="1" CardinalityMax="1">\n')
     codemeta = root.find('Codemeta')
     traverse(codemeta,uitvoer)
-    uitvoer.write(f'</Component>\n')
+    uitvoer.write(f'</Component>\n</ComponentSpec>\n')
 
     stderr(datetime.today().strftime("end:   %H:%M:%S"))
 
