@@ -15,10 +15,8 @@ def make_ns_attr(attr):
     return ns_attr
 
 
-    # first Elements, than Components!!!
-def traverse(element,uitvoer,indent=1):
-    indent_str = '    ' * indent
-    for child in element:
+def make_tags(child,indent):
+        indent_str = '    ' * indent
         attrs = ''
         try:
             minimum = int(child.attrib[make_ns_attr('min')])
@@ -47,19 +45,50 @@ def traverse(element,uitvoer,indent=1):
                 datatype = 'string'
             elif datatype == 'uri':
                 datatype = 'anyURI'
+            elif datatype == 'integer':
+                datatype = 'int'
             attrs += f' ValueScheme="{datatype}"'
             uitvoer.write(f'{indent_str}<Element name="{child.tag}"{attrs}/>\n')
-            continue
+            # continue
+            return
         except:
             pass
-        if child:
-            uitvoer.write(f'{indent_str}<Component name="{child.tag}"{attrs}>\n')
-            traverse(child,uitvoer,indent=indent+1)
-            uitvoer.write(f'{indent_str}</Component>\n')
-        else:
+        if not child:
             if child.tag!=make_ns_attr('instance'):
                 tag = child.tag.replace(ns['s'],'s').replace("{s}","s:")
                 uitvoer.write(f'{indent_str}<Element name="{tag}"{attrs}/>\n')
+        else:
+            stderr(f'{indent_str}<Component name="{child.tag}"{attrs}>\n')
+            uitvoer.write(f'{indent_str}<Component name="{child.tag}"{attrs}>\n')
+            traverse(child,uitvoer,indent=indent+1)
+            uitvoer.write(f'{indent_str}</Component>\n')
+
+
+    # first Elements, than Components!!!
+def traverse(element,uitvoer,indent=1):
+    indent_str = '    ' * indent
+    for child in element:
+        try:
+            datatype = child.attrib[make_ns_attr('datatype')]
+            has_children = False
+            # Element
+            make_tags(child,indent)
+        except:
+            has_children = True
+            # Component
+        stderr(f'child: {child.tag} ({has_children})')
+        stderr(f'#children: {len(child)}')
+    for child in element:
+        try:
+            datatype = child.attrib[make_ns_attr('datatype')]
+            has_children = False
+            # Element
+        except:
+            has_children = True
+            # Component
+            make_tags(child,indent)
+        stderr(f'child: {child.tag} ({has_children})')
+        stderr(f'#children: {len(child)}')
 
 
 
