@@ -43,12 +43,15 @@
 
     <xsl:template name="component">
         <xsl:param name="component"/>
+        <xsl:variable name="current" select="."/>
         <xsl:message>DBG: welcome to component[<xsl:value-of select="$component/@name"/>]</xsl:message>
         <xsl:variable name="instance">
             <xsl:for-each select="$component/Element">
                 <xsl:variable name="element" select="."/>
-                <xsl:message>DBG: welcome to element[<xsl:value-of select="$element/@name"/>]</xsl:message>
-                <xsl:for-each select="*[matches(@key,concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,')'))]">
+                <xsl:variable name="instances" select="$current/*[matches(@key,concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,')$'))]"/>
+                <!--<xsl:variable name="instances" select="$current/*[@key=$element/@name]"/>-->
+                <xsl:message>DBG: welcome to element[<xsl:value-of select="$element/@name"/>][<xsl:value-of select="concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,')$')"/>][<xsl:value-of select="count($instances)"/>]</xsl:message>
+                <xsl:for-each select="$instances">
                     <xsl:element name="{$element/@name}" namespace="{$cmdp-ns-uri}">
                         <xsl:value-of select="."/>
                     </xsl:element>
