@@ -7,30 +7,34 @@ locale.setlocale(locale.LC_ALL, 'nl_NL')
 import sys
 import xml.etree.ElementTree as ET
 
+
 ns = {'s' : 'http://di.huc.knaw.nl/sd/hi/schema'} 
 
 def make_ns_attr(attr):
     ns_attr = '{' + f'{ns["s"]}' + '}' + attr
     return ns_attr
 
+
+    # first Elements, than Components!!!
 def traverse(element,uitvoer,indent=1):
     indent_str = '    ' * indent
     for child in element:
         attrs = ''
-        minimum = 0
         try:
             minimum = int(child.attrib[make_ns_attr('min')])
-            attrs += f' CardinalityMin="{minimum}"'
         except:
-            pass
+            minimum = 0 
         try:
-            if minimum>1:
+            maximum = int(child.attrib[make_ns_attr('max')])
+            if maximum > 1:
                 maximum = 'unbounded'
-            else:
-                maximum = child.attrib[make_ns_attr('max')]
-            attrs += f' CardinalityMax="{maximum}"'
         except:
-            pass
+            maximum = 0 
+        if minimum>1: 
+            minimum = 1
+            maximum = 'unbounded'
+        attrs += f' CardinalityMin="{minimum}"'
+        attrs += f' CardinalityMax="{maximum}"'
         try:
             uri = child.attrib[make_ns_attr('uri')]
             if not uri=='':
@@ -41,7 +45,9 @@ def traverse(element,uitvoer,indent=1):
             datatype = child.attrib[make_ns_attr('datatype')]
             if datatype == 'text':
                 datatype = 'string'
-            attrs += f' DataType="{datatype}"'
+            elif datatype == 'uri':
+                datatype = 'anyURI'
+            attrs += f' ValueScheme="{datatype}"'
             uitvoer.write(f'{indent_str}<Element name="{child.tag}"{attrs}/>\n')
             continue
         except:
@@ -78,7 +84,7 @@ if __name__ == "__main__":
     args = arguments()
     inputfile = args['input']
     outputfile = args['output']
-    stderr(f'convert schema.xml to {outputfile}')
+    stderr(f'convert {inputfile} to {outputfile}')
     uitvoer = open(outputfile,'w')
     uitvoer.write('''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ComponentSpec isProfile="true" CMDVersion="1.2" CMDOriginalVersion="1.2" xsi:noNamespaceSchemaLocation="https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -93,11 +99,9 @@ if __name__ == "__main__":
 
     tree = ET.parse(inputfile)
     root = tree.getroot()
-#    stderr(f'root: {root.tag}')
-#    stderr(f'attrib: {root.attrib}')
-#    stderr(f'children: {root.children}')
     uitvoer.write(f'<Component name="Codemeta" CardinalityMin="1" CardinalityMax="1">\n')
     codemeta = root.find('Codemeta')
+    # first Elements, than Components!!!
     traverse(codemeta,uitvoer)
     uitvoer.write(f'</Component>\n</ComponentSpec>\n')
 
