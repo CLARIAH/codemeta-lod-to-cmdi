@@ -58,7 +58,7 @@ class TestList(unittest.TestCase):
             ]
 }
 '''
-        expected_result = '''        <cmdp:tag>
+        expected_result_possible_solution = '''        <cmdp:tag>
             <cmdp:developmentStatus>
                 <cmdp:this>trl:Level8Complete</cmdp:this>
             </cmdp:developmentStatus>
@@ -75,9 +75,25 @@ class TestList(unittest.TestCase):
 '''
         invoer = json.loads(test_data)
         res,attrs = mc.getComponents('tag',invoer,debug=False)
-        stderr(f'res: {res}')
+#        stderr(f'res: {res}')
         self.maxDiff = None
-        self.assertNotEqual(res,expected_result)
+        self.assertNotEqual(res,expected_result_possible_solution)
+
+        expected_result_current = '''        <cmdp:tag>
+            <cmdp:developmentStatus>trl:Level8Complete</cmdp:developmentStatus>
+            <cmdp:developmentStatus>
+                <cmdp:image org="og:image">https://www.repostatus.org/badges/latest/active.svg</cmdp:image>
+                <cmdp:definition org="skos:definition">The project has reached a stable, usable state and is being actively developed.</cmdp:definition>
+                <cmdp:inScheme org="skos:inScheme">
+                    <cmdp:creator org="dct:creator">Jason Antman</cmdp:creator>
+                    <cmdp:title org="dct:title">repostatus.org</cmdp:title>
+                </cmdp:inScheme>
+                <cmdp:prefLabel org="skos:prefLabel">Active</cmdp:prefLabel>
+            </cmdp:developmentStatus>
+        </cmdp:tag>
+'''
+        self.assertEqual(res,expected_result_current)
+
 
 
 def stderr(text,nl='\n'):
