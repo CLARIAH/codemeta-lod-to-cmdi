@@ -95,6 +95,19 @@ class TestList(unittest.TestCase):
         self.assertEqual(res,expected_result_current)
 
 
+    def test_empty_type(self):
+        test_data = '''{
+        "@type": {
+                    "@id": "skos:Concept",
+                    "@type": "owl:Class"
+                }
+}
+'''
+        expected_result = ''
+        invoer = json.loads(test_data)
+        res,attrs = mc.getComponents('tag',invoer,debug=False)
+        self.assertEqual(res,expected_result)
+
 
 def stderr(text,nl='\n'):
     sys.stderr.write(f"{text}{nl}")

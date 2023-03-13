@@ -66,6 +66,8 @@ def getComponents(tag,data,indent=2,debug=False):
     if debug:
         stderr(f'new_tag: {new_tag}')
         stderr(f'new_attrs: {new_attrs}')
+    if new_tag[0]=='@':
+        new_tag = ''
 
     if isinstance(data,list):
         for v in data:
@@ -76,17 +78,27 @@ def getComponents(tag,data,indent=2,debug=False):
                 stderr(f'res in list: {result}')
                 stderr(f'att in list: {att}')
     elif isinstance(data,dict):
+        if debug:
+            stderr(f'dict: {data}')
         indent += 1
         for k,v in data.items():
-            res,att = getComponents(f'{k}',v,indent)
+            res,att = getComponents(f'{k}',v,indent,debug)
+            if debug:
+                stderr(f'res: {res}')
             result += res
             if att!='':
                 attrs += f' {att}'
-        result = f'{indent_str}<cmdp:{new_tag}{new_attrs}>\n{result}{indent_str}</cmdp:{new_tag}>\n'
+        if debug:
+            stderr(f'result: {result}')
+        if result!='':
+            result = f'{indent_str}<cmdp:{new_tag}{new_attrs}>\n{result}{indent_str}</cmdp:{new_tag}>\n'
         attrs = ''
     elif isinstance(data,str) or isinstance(data,int):
         if tag[0]=='@':
+            if debug:
+                stderr(f'dont use tag')
             attrs = f'{tag[1:]}="{data}"'
+            tag = ''
         else:
             result += f'{indent_str}<cmdp:{new_tag}{attrs}{new_attrs}>{escape_chars(data)}</cmdp:{new_tag}>\n'
             attrs = ''
@@ -122,12 +134,12 @@ def stderr(text,nl='\n'):
 
 
 def arguments():
-    ap = argparse.ArgumentParser(description='Convert multi page tif files into single page jpeg files"')
+    ap = argparse.ArgumentParser(description='Convert json file to cmdi file"')
     ap.add_argument('-i', '--input',
-                    help="input file",
+                    help="input file (default input/record.json)",
                     default='input/record.json')
     ap.add_argument('-o', '--output',
-                    help="output file",
+                    help="output file (default output/record.cmdi)",
                     default='output/record.cmdi')
     args = vars(ap.parse_args())
     return args
