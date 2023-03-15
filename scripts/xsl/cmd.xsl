@@ -48,9 +48,9 @@
         <xsl:variable name="instance">
             <xsl:for-each select="$component/Element">
                 <xsl:variable name="element" select="."/>
-                <xsl:variable name="instances" select="$current/*[matches(@key,concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,')$'))]"/>
+                <xsl:variable name="instances" select="$current/*[matches(@key,concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,'|.*:',$element/@name,')$'))]"/>
                 <!--<xsl:variable name="instances" select="$current/*[@key=$element/@name]"/>-->
-                <xsl:message>DBG: welcome to element[<xsl:value-of select="$element/@name"/>][<xsl:value-of select="concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,')$')"/>][<xsl:value-of select="count($instances)"/>]</xsl:message>
+                <xsl:message>DBG: welcome to element[<xsl:value-of select="$element/@name"/>][<xsl:value-of select="concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,'|.*:',$element/@name,')$')"/>][<xsl:value-of select="count($instances)"/>]</xsl:message>
                 <xsl:for-each select="$instances">
                     <xsl:element name="{$element/@name}" namespace="{$cmdp-ns-uri}">
                         <xsl:value-of select="."/>
@@ -59,7 +59,7 @@
             </xsl:for-each>
             <xsl:for-each select="$component/Component">
                 <xsl:variable name="c" select="."/>
-                <xsl:for-each select="$current/(js:array[matches(@key,concat('^(',$c/@name,'|@',$c/@name,'|.*/',$c/@name,'|.*#',$c/@name,')$'))]/js:map,js:map[matches(@key,concat('^(',$c/@name,'|@',$c/@name,'|.*/',$c/@name,'|.*#',$c/@name,')$'))])">
+                <xsl:for-each select="$current/(js:array[matches(@key,concat('^(',$c/@name,'|@',$c/@name,'|.*/',$c/@name,'|.*#',$c/@name,'|.*:',$c/@name,')$'))]/js:map,js:map[matches(@key,concat('^(',$c/@name,'|@',$c/@name,'|.*/',$c/@name,'|.*#',$c/@name,'|.*:',$c/@name,')$'))])">
                     <xsl:call-template name="component">
                         <xsl:with-param name="component" select="$c"/>
                     </xsl:call-template>
