@@ -57,6 +57,14 @@
                     </xsl:element>
                 </xsl:for-each>
             </xsl:for-each>
+            <xsl:for-each select="$component/Component">
+                <xsl:variable name="c" select="."/>
+                <xsl:for-each select="$current/(js:array[matches(@key,concat('^(',$c/@name,'|@',$c/@name,'|.*/',$c/@name,'|.*#',$c/@name,')$'))]/js:map,js:map[matches(@key,concat('^(',$c/@name,'|@',$c/@name,'|.*/',$c/@name,'|.*#',$c/@name,')$'))])">
+                    <xsl:call-template name="component">
+                        <xsl:with-param name="component" select="$c"/>
+                    </xsl:call-template>
+                </xsl:for-each>
+            </xsl:for-each>
         </xsl:variable>
         
         <!--<xsl:if test="not(empty($instance/*))">-->
