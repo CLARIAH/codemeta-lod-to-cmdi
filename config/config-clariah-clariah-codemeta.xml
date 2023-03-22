@@ -1,0 +1,54 @@
+<!-- This is the configuration for CLARIAH codemeta harvesting. -->
+<config>
+
+  <!-- ### configuration settings ### -->
+  <settings>
+    <!-- Working directory. -->
+    <workdir>workspace</workdir>
+
+    <!-- Maximum number of attempts per record before giving up. -->
+    <max-retry-count>2</max-retry-count>
+
+    <!-- Delay between retries of a record (milliseconds). -->
+    <retry-delay>10000</retry-delay>
+
+    <!-- Maximum number of concurrent harvester threads -->
+    <max-jobs>6</max-jobs>
+
+    <!-- Number of resources placed in the resource pool. -->
+    <resource-pool-size>4</resource-pool-size>
+
+    <!-- Default timeout (for connection and reading) for a single
+    http request in seconds. If unspecified, will be INFINITE.  -->
+    <timeout>60</timeout>
+
+    <protocol>nl.mpi.oai.harvester.protocol.JSONProtocol</protocol>
+     
+    <json-fetch endpoint="https://tools.dev.clariah.nl/data.json"/>
+    
+  </settings>
+
+
+  <!-- ### output directories (referenced in the action section) ### -->
+  <directories>
+    <!-- When the attribute 'max-files' is non-zero, subdirectories
+         will be created to ensure no directory has more than that
+         number of files. -->
+    <dir path="json" id="js" max-files="0"/>
+    <dir path="cmdi" id="rec" max-files="0"/>
+  </directories>
+
+
+  <!-- ### actions to take on metadata formats (in order of preference) ### -->
+  <actions>
+    <format match="type" value="*">
+      <action type="js2xml"/>
+      <action type="save" dir="js" suffix=".xml"/>
+      <action type="transform" file="https://raw.githubusercontent.com/CLARIAH/codemeta-lod-to-cmdi/main/scripts/xsl/js-split.xsl"/>
+      <action type="xml-split"/>
+      <action type="transform" file="https://raw.githubusercontent.com/CLARIAH/codemeta-lod-to-cmdi/main/scripts/xsl/cmd.xsl"/>
+      <action type="save" dir="rec" suffix=".xml"/>
+    </format>
+  </actions>
+  
+</config>
