@@ -52,9 +52,20 @@
                 <!--<xsl:variable name="instances" select="$current/*[@key=$element/@name]"/>-->
                 <xsl:message>DBG: welcome to element[<xsl:value-of select="$element/@name"/>][<xsl:value-of select="concat('^(',$element/@name,'|@',$element/@name,'|.*/',$element/@name,'|.*#',$element/@name,'|.*:',$element/@name,')$')"/>][<xsl:value-of select="count($instances)"/>]</xsl:message>
                 <xsl:for-each select="$instances">
-                    <xsl:element name="{$element/@name}" namespace="{$cmdp-ns-uri}">
-                        <xsl:value-of select="."/>
-                    </xsl:element>
+                    <xsl:choose>
+                        <xsl:when test="self::js:array">
+                            <xsl:for-each select="*">
+                                <xsl:element name="{$element/@name}" namespace="{$cmdp-ns-uri}">
+                                    <xsl:value-of select="."/>
+                                </xsl:element>                            
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:element name="{$element/@name}" namespace="{$cmdp-ns-uri}">
+                                <xsl:value-of select="."/>
+                            </xsl:element>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:for-each>
             </xsl:for-each>
             <xsl:for-each select="$component/Component">
