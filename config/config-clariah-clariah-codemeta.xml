@@ -24,8 +24,6 @@
 
     <protocol>nl.mpi.oai.harvester.protocol.JSONProtocol</protocol>
      
-    <json-fetch endpoint="https://tools.dev.clariah.nl/data.json"/>
-    
   </settings>
 
 
@@ -50,5 +48,11 @@
       <action type="save" dir="rec" suffix=".xml"/>
     </format>
   </actions>
+  
+  <!-- ### list of providers ### -->
+  <providers>
+    <provider url="https://tools.dev.clariah.nl/data.json" name="CLARIAH-NL"/>
+  </providers>
+  
   
 </config>
