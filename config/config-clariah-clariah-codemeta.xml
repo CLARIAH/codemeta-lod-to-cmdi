@@ -40,7 +40,6 @@
   <!-- ### actions to take on metadata formats (in order of preference) ### -->
   <actions>
     <format match="type" value="*">
-      <action type="js2xml"/>
       <action type="save" dir="js" suffix=".xml"/>
       <action type="transform" file="https://raw.githubusercontent.com/CLARIAH/codemeta-lod-to-cmdi/main/scripts/xsl/js-split.xsl"/>
       <action type="xml-split"/>
@@ -53,6 +52,5 @@
   <providers>
     <provider url="https://tools.dev.clariah.nl/data.json" name="CLARIAH-NL"/>
   </providers>
-  
   
 </config>
