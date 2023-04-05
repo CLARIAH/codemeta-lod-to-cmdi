@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:js="http://www.w3.org/2005/xpath-functions" exclude-result-prefixes="js"
     version="1.0">
     
-    <xsl:variable name="CTXT" select="/js:map/js:array[@key='@context']"/>
+    <xsl:variable name="CTXT" select="/js:map/array[@key='@context']"/>
     
     <xsl:template match="text()"/>
     
@@ -12,7 +12,7 @@
         </records>
     </xsl:template>
     
-    <xsl:template match="js:array[@key='@graph']">
+    <xsl:template match="array[@key='@graph']">
         <xsl:for-each select="*">
             <record id="{position()}" xmlns="">
                 <map xmlns="http://www.w3.org/2005/xpath-functions">
