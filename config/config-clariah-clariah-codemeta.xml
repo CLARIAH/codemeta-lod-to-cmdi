@@ -44,6 +44,7 @@
       <action type="save" dir="js" suffix=".xml"/>
       <action type="transform" file="https://raw.githubusercontent.com/CLARIAH/codemeta-lod-to-cmdi/main/scripts/xsl/js-split.xsl"/>
       <action type="xml-split"/>
+      <action type="save" dir="js" suffix=".xml"/>
       <action type="transform" file="https://raw.githubusercontent.com/CLARIAH/codemeta-lod-to-cmdi/main/scripts/xsl/cmd.xsl"/>
       <action type="save" dir="rec" suffix=".xml"/>
     </format>
